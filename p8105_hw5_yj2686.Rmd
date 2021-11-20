@@ -116,7 +116,7 @@ results_df %>%
 
 ## Problem 2
 
-Create a tidy dataframe containing data from all participants, including the subject ID, arm, and observations over time
+Create a tidy dataframe containing data from all participants
 
 ```{r}
 zip_df = tibble(files = list.files("./data/zip_data/")) %>% 
@@ -140,7 +140,7 @@ zip_df = tibble(files = list.files("./data/zip_data/")) %>%
   )
 ```
 
-Make a spaghetti plot showing observations on each subject over time, and comment on differences between groups.
+Make a spaghetti plot showing observations on each subject over time
 
 ```{r}
 zip_df %>% 
@@ -148,17 +148,16 @@ zip_df %>%
   facet_grid(. ~ arm) +
   geom_line(aes(group = subject_id)) +
   labs(title = "Spaghetti Plot of Observations on 
-       Control Arm and Experimental Arm over 8 Weeks") +
+       Control Arm and Experimental Arm over 8 Weeks",
+       y = "Observation values") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-According to the spaghetti plot above, the experimental arm showed a increasing trend in observations over 8 weeks, but the control arm did not show any obvious trend. Except week 1, the observations of experimental arm did not have values below 0. However, several observations of control arm have values below 0.
+According to the spaghetti plot above, the observations of experimental arm show a increasing trend over 8 weeks. As for the control arm, there are some fluctuations over time but the observations do not show any obvious trend. Except week 1, the observations of experimental arm do not have values below 0. However, several observations of control arm have values below 0.
 
 ## Problem 3
 
 ```{r}
-library(tidyverse)
-
 set.seed(10)
 
 iris_with_missing = iris %>% 
@@ -170,14 +169,22 @@ Write a function.
 
 ```{r}
 fill_in_missing = function(vector) {
-  if (is.numeric) {
-    ...
+  
+  if (is.numeric(vector)) {
+    vector[is.na(vector)] = mean(vector,na.rm = T)
   }
   
-  if (is.character) {
-    ...
+  else if (is.character(vector)) {
+    vector[is.na(vector)] = "virginica"
   }
-  
+  return(vector)
 }
+```
+
+Apply the function to iris dataset 
+
+```{r}
+iris_with_missing = map(iris_with_missing, fill_in_missing) 
+iris_with_missing %>% as_tibble() %>% knitr::kable()
 ```
 
